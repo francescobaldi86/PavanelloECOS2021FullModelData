@@ -8777,7 +8777,7 @@ set T_H_TD :=
 													
 # INPUT of 12 TD distributions : 	
 												
-param heating_time_series :=											#riscaldamento
+param heating_time_series :=											
 ["HOUSEHOLDS",*,*]:	1	2	3	4	5	6 :=
 1	0	0	0	0	0	0
 2	0	0	0	0	0	0
@@ -8857,7 +8857,7 @@ param heating_time_series :=											#riscaldamento
 24	0	0	0	0	0	0
 ;						
 
-param cooling_time_series:=											#raffrescamento 
+param cooling_time_series:=											 
 ["HOUSEHOLDS",*,*]:	1	2	3	4	5	6 :=
 1	0	0	0	0.001179166	0	0
 2	0	0	0	0.000954297	0	0
@@ -8937,7 +8937,7 @@ param cooling_time_series:=											#raffrescamento
 24	0	0	0	0	0	0
 ;														
 													
-param electricity_time_series :=											#altro 
+param electricity_time_series :=											 
 ["HOUSEHOLDS",*,*]:	1	2	3	4	5	6 :=
 1	2.34165E-05	2.34165E-05	2.34165E-05	2.34165E-05	2.34165E-05	2.34165E-05
 2	2.34165E-05	2.34165E-05	2.34165E-05	2.34165E-05	2.34165E-05	2.34165E-05
@@ -9018,7 +9018,7 @@ param electricity_time_series :=											#altro
 24	0	0	0	0	0	0
 ;							
 													
-param DHW_time_series :=													#ACS FATTO 
+param DHW_time_series :=													 
 ["HOUSEHOLDS",*,*]: 1	2	3	4	5	6:=
 1	2.3218E-05	2.3218E-05	2.3218E-05	2.3218E-05	2.3218E-05	2.3218E-05
 2	2.3218E-05	2.3218E-05	2.3218E-05	2.3218E-05	2.3218E-05	2.3218E-05
@@ -9098,7 +9098,7 @@ param DHW_time_series :=													#ACS FATTO
 24	0	0	0	0	0	0
 ;						
 
-param Water_time_series :=													 #WATER
+param Water_time_series :=													
 ["HOUSEHOLDS",*,*]:	1	2	3	4	5	6 :=
 1	2.962E-05	2.00188E-05	2.98153E-05	1.01569E-05	1.35924E-05	1.13261E-05
 2	2.962E-05	2.00188E-05	2.98153E-05	1.01569E-05	1.35924E-05	1.13261E-05
@@ -9260,7 +9260,7 @@ param mob_pass_time_series := 							#mobility
 ;					
 						
 								
-param c_p_t:=													#va moltilicato per F [GW]
+param c_p_t:=													
 ["PV_ground",*,*]:	1	2	3	4	5	6 :=
 1	0	0	0	0	0	0
 2	0	0	0	0	0	0
