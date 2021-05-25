@@ -1,0 +1,15 @@
+# These equations should be added to the ENERGYSCOPE TD main model to adapt it to the case used for the ECOS 2021 paper "Analysis of the impact of the diffusion of innovative technologies distributed for electricity generation on small island" by Pavanello et al. 
+
+#NEW [Eq. 39] area tetti divisa in PV e termal solar
+subject to area_PVroof:
+	A_PVroof = F ["PV_roof"]*(1000000000)*0.0066;
+	
+subject to area_ST:
+	A_ST = F ["TERMAL_SOLAR"] *(1000000000)*0.0014 ;
+	
+subject to area_tot:
+	A_PVroof + A_ST  <= areaMAX ;
+
+#aggiunta per GWP_opmin
+subject to Minimum_Cost:
+	TotalCost <= Cost_limit;

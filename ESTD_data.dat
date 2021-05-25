@@ -1,0 +1,235 @@
+# UNIT MEASURES:																									
+# Unless otherwise specified units are:																									
+# Energy [GWh], Power [GW], Cost [MCHF], Time [h], Passenger transport [Mpkm], Freight Transport [Mtkm]																									
+																									
+# References based on Supplementary material																									
+																									
+# --------------------------																									
+# SETS not depending on TD																									
+# --------------------------																									
+																									
+set SECTORS := 	HOUSEHOLDS	HOTELS	TRANSPORTATION;																					
+set END_USES_INPUT := 	OTHER_EL   HEATING	 COOLING	DHW		WATER	MOBILITY;																		
+set END_USES_CATEGORIES := 	ELECTRICITY	 COOLING	HOT_WATER	WASTE_FUEL	WATER	MOBILITY;																				
+set RESOURCES :=	ELECTRICITY		LPG		DIESEL	NG	WASTE 	RES_WIND  RES_SOLAR  WOOD	BIO_WASTE;																														
+set RE_RESOURCES :=	 RES_WIND 	RES_SOLAR ;																																
+																									
+set END_USES_TYPES_OF_CATEGORY["ELECTRICITY"] :=	ELECTRICITY;																								
+set END_USES_TYPES_OF_CATEGORY["COOLING"] :=	COOLING;																								
+set END_USES_TYPES_OF_CATEGORY["HOT_WATER"] :=	HOT_WATER;			
+set END_USES_TYPES_OF_CATEGORY["WASTE_FUEL"] :=	WASTE_FUEL;																				
+set END_USES_TYPES_OF_CATEGORY["WATER"] :=	WATER;
+set END_USES_TYPES_OF_CATEGORY["MOBILITY"] :=	MOBILITY;
+																									
+set TECHNOLOGIES_OF_END_USES_TYPE["ELECTRICITY"] := 	PV_ground	PV_roof		WIND	ENGINE_DIESEL	ENGINE_LPG 		ENGINE_NG	WASTE_TO_ENERGY		ENGINE_DIESEL_OLD;												
+set TECHNOLOGIES_OF_END_USES_TYPE["COOLING"] := 	AIR_CON		AIR_CON_OLD;																
+set TECHNOLOGIES_OF_END_USES_TYPE["HOT_WATER"] := 	BOILER_GAS		BOILER_LPG	BOILER_EL	BOILER_WOOD		HP 	TERMAL_SOLAR	BOILER_EL_OLD;		
+set TECHNOLOGIES_OF_END_USES_TYPE["WASTE_FUEL"] := 	BIOW_TO_FUEL 	W_TO_FUEL;																						
+set TECHNOLOGIES_OF_END_USES_TYPE["WATER"] :=	REVERSE_OSMOSIS		MS_FLASH	ME_DISTILLATION		REVERSE_OSMOSIS_OLD;
+set TECHNOLOGIES_OF_END_USES_TYPE["MOBILITY"] :=	CAR_DIESEL	CAR_DIESEL_OLD		CAR_HEV 	CAR_BEV	;				#	CAR_PHEV
+																									
+set STORAGE_TECH :=	 BATT  	TS_AIR_CON	TS_BOILER_GAS	   TS_BOILER_LPG	  TS_BOILER_EL	 TS_BOILER_WOOD		TS_HP	TS_TERMAL_SOLAR		S_WASTE_FUEL	S_WATER	TS_BOILER_EL_OLD;					
+set INFRASTRUCTURE  :=	GRID ;															
+																									
+# Storage subsets																																																	
+set STORAGE_DAILY :=   TS_AIR_CON		TS_BOILER_GAS	  TS_BOILER_LPG	  TS_BOILER_EL	 TS_BOILER_WOOD		TS_HP 	TS_TERMAL_SOLAR		TS_BOILER_EL_OLD;																
+																									
+set STORAGE_OF_END_USES_TYPES ["COOLING"] := 	TS_AIR_CON;																							
+set STORAGE_OF_END_USES_TYPES ["HOT_WATER"] := 	TS_BOILER_GAS		TS_BOILER_LPG	TS_BOILER_EL	TS_HP	TS_BOILER_WOOD	TS_TERMAL_SOLAR		TS_BOILER_EL_OLD;															
+set STORAGE_OF_END_USES_TYPES ["ELECTRICITY"] :=  	BATT;		
+set STORAGE_OF_END_USES_TYPES ["WASTE_FUEL"] :=  S_WASTE_FUEL;																					
+set STORAGE_OF_END_USES_TYPES ["WATER"] :=  S_WATER;
+																									
+# Link between storages & specific technologies																									
+set TS_OF_DEC_TECH ["BOILER_GAS"] := TS_BOILER_GAS;																									
+set TS_OF_DEC_TECH ["BOILER_LPG"] := TS_BOILER_LPG;			
+set TS_OF_DEC_TECH ["BOILER_EL_OLD"] := TS_BOILER_EL_OLD;																				
+set TS_OF_DEC_TECH ["BOILER_EL"] := TS_BOILER_EL;																																																						
+set TS_OF_DEC_TECH ["BOILER_WOOD"] := TS_BOILER_WOOD;	
+set TS_OF_DEC_TECH ["HP"] := TS_HP;
+# set TS_OF_DEC_TECH ["WASTE_TO_ENERGY"] := TS_WASTE_TO_ENERGY;
+#set TS_OF_DEC_TECH ["AIR_CON"] := TS_AIR_CON;
+#set TS_OF_DEC_TECH ["TERMAL_SOLAR"] := TS_TERMAL_SOLAR;																																																																					
+																									
+# Additional sets, just needed for printing results																																					
+set BOILERS	:=	BOILER_GAS	 BOILER_LPG		BOILER_WOOD		BOILER_EL		BOILER_EL_OLD;													
+																									
+# -----------------------------																									
+# PARAMETERS NOT DEPENDING ON THE NUMBER OF TYPICAL DAYS : 																									
+# -----------------------------																									
+																									
+## PARAMETERS presented in Table 2.																									
+param re_share_primary := 	0	;		# Minimum RE share in primary consumption								
+														
+param gwp_limit := 	10;	        # [ktCO2-eq./year]	# Maximum GWP emissions 			vedi pag45,	12.4=gwp_op_tot		
+param areaMAX := 77800;		
+param Cost_limit:=1000;											
+																									
+# Part [2.4]																																																																							
+param n_car_max :=	7015	;			# n_car_max [car]: Maximum number of cars																																															
+param c_grid_extra :=	9.40E+03	;	# cost to reinforce the grid due to intermittent renewable energy penetration. See 2.2.2																						
+param i_rate := 	0.03125	;	
+	
+# end_Uses_year see part [2.1]																									
+param end_uses_demand_year: 	HOUSEHOLDS		HOTELS	TRANSPORTATION:=																				
+OTHER_EL						7.21		6.32			0			#pag 40 del PAESC, file TDmanuali																									
+HEATING							3.49		2.03			0																
+COOLING							0.45		1.61			0														
+DHW								3.79		1.75			0
+WATER							3.195		0.435			0			#1.06		0.15	
+MOBILITY						0			0			69.50;			#	Mpkm/year	 				
+																																																							
+																																																																												
+# Link between layers  (data from Tables 19,21,22,23,25,29,30)																									
+param layers_in_out:	ELECTRICITY   LPG	DIESEL	NG	WASTE	COOLING 	HOT_WATER	RES_WIND	RES_SOLAR 	WOOD 	BIO_WASTE	WASTE_FUEL	WATER	MOBILITY:=	
+ELECTRICITY		1	0	0	0	0	0	0	0	0	0	0	0	0	0
+LPG				0	1	0	0	0	0	0	0	0	0	0	0	0	0
+DIESEL			0	0	1	0	0	0	0	0	0	0	0	0	0	0
+NG				0	0	0	1	0	0	0	0	0	0	0	0	0	0
+WASTE			0	0	0	0	1	0	0	0	0	0	0	0	0	0
+RES_WIND 		0	0	0	0	0	0	0	1	0	0	0	0	0	0
+RES_SOLAR  		0	0	0	0	0	0	0	0	1	0	0	0	0	0
+WOOD			0	0	0	0	0	0	0	0	0	1	0	0	0	0
+BIO_WASTE		0	0	0	0	0	0	0	0	0	0	1	0	0	0
+PV_ground		1	0	0	0	0	0	0	0	-1	0	0	0	0	0
+PV_roof			1	0	0	0	0	0	0	0	-1	0	0	0	0	0
+WIND			1	0	0	0	0	0	0	-1	0	0	0	0	0	0
+AIR_CON_OLD		-1	0	0	0	0	3	0	0	0	0	0	0	0	0
+AIR_CON 		-1	0	0	0	0	3	0	0	0	0	0	0	0	0
+BOILER_GAS		0	0	0	-1.1111	0	0	1	0	0	0	0	0	0	0	
+BOILER_EL_OLD	-1	0	0	0	0	0	1	0	0	0 	0	0 	0	0
+BOILER_LPG		0	-1.1111	0	0	0	0	1	0	0	0 	0	0 	0	0
+BOILER_EL		-1	0	0	0	0	0	1	0	0	0	0	0	0	0
+BOILER_WOOD		0	0	0	0	0	0	1	0	0	-1.2	0	0	0	0	
+TERMAL_SOLAR	0	0	0	0	0	0	1	0	-1	0	0	0	0	0
+HP			-0.3333	0	0	0	0	0	1	0	0	0	0	0	0	0	
+ENGINE_DIESEL	1	0	-2.5	0	0	0	0	0	0	0	0	0	0	0	
+ENGINE_DIESEL_OLD	1	0	-2.5	0	0	0	0	0	0	0	0	0	0	0
+ENGINE_LPG 		1	-2.5	0	0	0	0	0	0	0	0	0	0	0	0
+ENGINE_NG		1	0	0	-2.5	0	0	0	0	0	0	0	0	0	0
+WASTE_TO_ENERGY	0.4444	0	0	0	0	0	1	0	0	0	0	-2.2222	0	0
+BIOW_TO_FUEL 	0	0	0	0	0	0	0	0	0	0	-1	1	0	0
+W_TO_FUEL		0	0	0	0	-1	0	0	0	0	0	0	1	0	0
+REVERSE_OSMOSIS_OLD	-3	0	0	0	0	0	0	0	0	0	0	0	1	0
+REVERSE_OSMOSIS	-3	0	0	0	0	0	0	0	0	0	0	0	1	0
+MS_FLASH		0	0	0	0	0	0	-1.4	0	0	0	0	0	1	0
+ME_DISTILLATION	0	0	0	0	0	0	-1	0	0	0	0	0	1	0
+GRID			0	0	0	0	0	0	0	0	0	0	0	0	0	0
+CAR_DIESEL		0	0	-0.3868	0	0	0	0	0	0	0	0	0	0	1		
+CAR_HEV			0	0	-0.2471	0	0	0	0	0	0	0	0	0	0	1		
+CAR_BEV			-0.0863	0	0	0	0	0	0	0	0	0	0	0	0	1		
+
+CAR_DIESEL_OLD	0	0	-0.44	0	0	0	0	0	0	0	0	0	0	1	
+;																									
+																									
+# Technologies data from Tables (10,19,21,22,23,25,27,28,29,30) and part [2.2.1.1] for hydro	ATTENZIONE AL CAMBIO: VALORI IN kCHF/MW e kCHF/MWh																
+param:		c_inv	c_maint	gwp_constr	lifetime  c_p	fmin_perc	fmax_perc	f_min	f_max :=																																
+PV_ground 		1300	20.67	2081.43	25		1		0		1		0	0.003
+PV_roof			1800	28.55	2081.43	25		1		0		1		0	0.1	
+WIND			2000	32.61	622.85	20		1		0		1		0	0.013																
+AIR_CON_OLD		0		22.48	0		18		1		0		1	0.001	0.001
+AIR_CON			525.45	22.48	164.89	18		1		0		1		0	20
+BOILER_GAS		169.3	5.08	21.09	17		1		0		1		0	0
+BOILER_LPG		169.3	5.08	21.09	17		1		0		1		0	20
+BOILER_EL		42.69	0.19	1.47	15		1		0		1		0	10			
+BOILER_EL_OLD	0		0.19	0		15		1		0		1		0.0052	0.0052			
+BOILER_WOOD		169.3	5.08	21.09	17		1		0		1		0	0
+TERMAL_SOLAR	384		4.224	100		17		1		0		1		0	20
+HP				525.45	22.48	164.89	18		1		0		1		0	20
+ENGINE_DIESEL_OLD	0	15		0		20		1		0		1		0.022	0.022
+ENGINE_DIESEL	250		15		490.88	20		1		0		1		0	20
+ENGINE_LPG 		350		20		490.88	20		1		0		1		0	20	
+ENGINE_NG		350		20		490.88	20		1		0		1		0	0
+WASTE_TO_ENERGY	3126.67	118.88	647.82	25		0.85	0		0.5		0	20
+BIOW_TO_FUEL 	0		0		0		50		1		0		1		0	100000
+W_TO_FUEL		0		0		0		50		1		0		1		0	100000
+REVERSE_OSMOSIS_OLD	0	22.48	0		18		1		0		1		0.00013	0.00013	
+REVERSE_OSMOSIS	8147	22.48	164.89	18		1		0		1		0	20	
+MS_FLASH		525.45	22.48	164.89	18		1		0		1		0	0
+ME_DISTILLATION	525.45	22.48	164.89	18		1		0		1		0	0
+BATT  			600		0		61.3	10		1		0		1		0	100
+TS_AIR_CON		0		0		0		25		1		0		1		0	100000
+TS_BOILER_GAS	20.26	0		0		25		1		0		1		0	100000
+TS_BOILER_EL_OLD	0	0		0		25		1		0		1		0	100000
+TS_BOILER_LPG	20.26	0		0		25		1		0		1		0	100000
+TS_BOILER_EL	20.26	0		0		25		1		0		1		0	100000
+TS_BOILER_WOOD	20.26	0		0		25		1		0		1		0	100000	
+TS_TERMAL_SOLAR	20.26	0		0		25		1		0		1		0	100000	
+TS_HP			20.26	0		0		25		1		0		1		0	100000	
+S_WASTE_FUEL	2.26	0		0		25		1		0		1		0	100000	
+S_WATER			0		0		0		25		1		0		1		0	100000	
+#TS_WASTE_TO_ENERGY	20.26	0		0		25		1		0		1		0	100000																																													
+GRID 			61100	0		0		80		1		0		1		0	20	
+		
+CAR_DIESEL		129.4	6.47	77.6	10		0.0139	0		1		0	10			#250																												
+CAR_HEV			175		9.5		100		10		0.0139	0		1		0	10			#172.52 c_inv	9.32		103.51					
+CAR_BEV			310.54	2.74	107.39	10		0.0139	0		1		0	10				#350
+CAR_DIESEL_OLD	0		6.47	0		10		0.0139	0		1	0.57964	0.57964																																											
+; 																									
+																									
+# RESOURCES: part [2.5] (Table 26)	 ATTENZIONE AL CAMBIO: VALORI IN kCHF/MWh
+param:		avail	gwp_op	 c_op	:=																																										
+ELECTRICITY 0		0.4818	0
+LPG			1000	0.3448	0.177230769			#LPG		1000000	avail																		
+DIESEL		1000	0.3148	0.0774				#DIESEL		1000000																		
+NG			0		0.2666	0.12				#NG			1000000																			
+WASTE		15		0.1501	0					#WASTE		11142																
+RES_WIND	1000000	0		0																						
+RES_SOLAR	1000000	0		0																																												
+WOOD		0		0.0118	 0.093241008		#WOOD 		10000
+BIO_WASTE	11.2	0.1501	0
+;																									
+																																
+																									
+# Storage inlet/outlet efficiency : part [2.6] (Table 28) and part [2.2.1.1] for hydro.																									
+param storage_eff_in:	ELECTRICITY	LPG	DIESEL	NG	WASTE	COOLING		HOT_WATER	RES_WIND	RES_SOLAR 	WOOD	BIO_WASTE	WASTE_FUEL	WATER	MOBILITY:=	
+			
+BATT				0.95 0	0	0	0	0	0	0	0	0	0	0	0	0
+TS_AIR_CON 			0	0	0	0	0	1	0	0	0	0	0	0	0	0
+TS_BOILER_EL		0	0	0	0	0	0	1	0	0	0	0	0	0	0
+TS_BOILER_GAS		0	0	0	0	0	0	1	0	0	0	0	0	0	0
+TS_BOILER_EL_OLD	0	0	0	0	0	0	1	0	0	0	0	0	0	0
+TS_BOILER_LPG		0	0	0	0	0	0	1	0	0	0	0	0	0	0
+TS_BOILER_WOOD		0	0	0	0	0	0	1	0	0	0	0	0	0	0
+TS_HP				0	0	0	0	0	0	1	0	0	0	0	0	0	0
+TS_TERMAL_SOLAR		0	0	0	0	0	0	1	0	0	0	0	0	0	0
+S_WASTE_FUEL		0	0	0	0	0	0	0	0	0	0	0	1	0	0
+S_WATER				0	0	0	0	0	0	0	0	0	0	0	0	1	0
+#TS_WASTE_TO_ENERGY	0	0	0	0	0	0	1	0	0	0	0	0	0	0
+;			  	 					
+																		
+param storage_eff_out:	ELECTRICITY	LPG	DIESEL	NG	WASTE	COOLING		HOT_WATER	RES_WIND	RES_SOLAR 	WOOD	BIO_WASTE	WASTE_FUEL	WATER	MOBILITY:=	
+BATT				0.95 0	0	0	0	0	0	0	0	0	0	0	0	0
+TS_AIR_CON 			0	0	0	0	0	1	0	0	0	0	0	0	0	0
+TS_BOILER_EL		0	0	0	0	0	0	1	0	0	0	0	0	0	0
+TS_BOILER_GAS		0	0	0	0	0	0	1	0	0	0	0	0	0	0
+TS_BOILER_EL_OLD	0	0	0	0	0	0	1	0	0	0	0	0	0	0
+TS_BOILER_LPG		0	0	0	0	0	0	1	0	0	0	0	0	0	0
+TS_BOILER_WOOD		0	0	0	0	0	0	1	0	0	0	0	0	0	0
+TS_HP				0	0	0	0	0	0	1	0	0	0	0	0	0	0
+TS_TERMAL_SOLAR		0	0	0	0	0	0	1	0	0	0	0	0	0	0
+S_WASTE_FUEL		0	0	0	0	0	0	0	0	0	0	0	1	0	0
+S_WATER				0	0	0	0	0	0	0	0	0	0	0	0	1	0
+#TS_WASTE_TO_ENERGY	0	0	0	0	0	0	1	0	0	0	0	0	0	0
+;																									
+																									
+# Storage characteristics : part [2.6] (Table 28) and part [2.2.1.1] for hydro.																									
+param :	storage_charge_time	storage_discharge_time	storage_availability	storage_losses	:=																			
+BATT			4	4	1	0.0002																					
+TS_AIR_CON		4	4	1	0.00824																					
+TS_BOILER_EL 	4	4	1	0.00824																					
+TS_BOILER_GAS	4	4	1	0.00824																																								
+TS_BOILER_EL_OLD	4	4	1	0.00824																																										
+TS_BOILER_LPG	4	4	1	0.00824		
+TS_BOILER_WOOD	4	4	1	0.00824	
+TS_HP			4	4	1	0.00824	
+TS_TERMAL_SOLAR	4	4	1	0.00824	
+S_WASTE_FUEL	4	4	1	0.00824	
+S_WATER			4	4	1	0.00824	
+#TS_WASTE_TO_ENERGY	4	4	1	0.00824
+;																									
+																																															
+# part [2.7.4]																									
+param loss_network	:=																								
+ELECTRICITY	0.07																																																
+;																									
